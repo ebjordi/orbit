@@ -4,8 +4,7 @@ from scipy.interpolate import interp1d
 
 
 def phase(JD, T0=57880.634, P=29.1333):
-    """Returns phase given orbital parameters, default parameters are for i
-    Orionis params updated to Eguren 2021"""
+    """Calculates the phase of an orbit given the Julian date (JD), the time of periastron passage (T0), the period (P), and a flag to indicate whether to return the mean anomaly or not. Default values are for i Orionis and are updated to Eguren 2021."""
     JD = JD * np.ones_like(JD)
     T0 = T0 * np.ones_like(JD)
     pha = (JD - T0) / P
@@ -19,8 +18,7 @@ def phase(JD, T0=57880.634, P=29.1333):
 
 
 def excentric_anomaly(phi, e=0.734):
-    """Returns excentric anomaly given a mean anomaly(phase) and other orbital parameters
-    Default values are for i Ori found in Eguren 2018"""
+    """Calculates the excentric anomaly of an orbit given a phase"""
     phi = np.array(phi) * 2 * np.pi
     E0 = phi
     count = 0
@@ -46,7 +44,7 @@ def excentric_anomaly(phi, e=0.734):
 
 
 def true_anomaly(excentric_anomaly, e=0.734):
-    """Returns true anomaly give an excentric anomaly and excentricity"""
+    """Calculates the true anomaly of an orbit given the excentric anomaly and excentricity."""
 
     E = np.array(excentric_anomaly) * np.ones_like(excentric_anomaly)
     theta = 2 * np.arctan(np.sqrt((1 + e) / (1 - e)) * np.tan(E / 2))
@@ -60,8 +58,7 @@ def true_anomaly(excentric_anomaly, e=0.734):
 
 
 def rv(true_anomaly, K=108.3, e=0.734, omega=126.3, gamma=34):
-    """Return an array of radial velocities from input true anomalies and an
-    orbital solution"""
+    """Calculates the radial velocity of an object in orbit given the true anomaly, and other orbital parameters such as velocity semi-amplitude (K), excentricity (e), longitude of periastron (omega), and systemic velocity (gamma)."""
     ω = omega * np.pi / 180
     θ = true_anomaly
     Vrad = K * (np.cos(θ + ω) + e * np.cos(ω))
@@ -71,7 +68,7 @@ def rv(true_anomaly, K=108.3, e=0.734, omega=126.3, gamma=34):
 def velocity_curve_jd(
     JD, T0=57880.63, P=29.1333, e=0.734, K=108.3, omega=126.3, gamma=34
 ):
-
+    """Calculates the radial velocity of an object in orbit for a given Julian date (JD) using the `phase`, `excentric_anomaly` , `true_anomaly` and radial velocity(`rv`) functions."""
     φ = phase(JD, T0=T0, P=P)
     E = excentric_anomaly(φ, e=e)
     θ = true_anomaly(E, e=e)
@@ -82,8 +79,7 @@ def velocity_curve_jd(
 def velocity_curve_from_phase(
     points=1200, a=0, b=1.2, e=0.734, K=108.3, omega=126.3, gamma=34
 ):
-    """Return a phase distribution and corresponding radial velocity from a
-    number of points, constraints and an orbital solution"""
+    """Calculates the radial velocity of an object in orbit for a given range of phases using the phase, excentric anomaly, true anomaly and radial velocity functions. The number of points, the range of the phase and other orbital parameters can be given as input."""
     φ = np.linspace(a, b, points)
     E = excentric_anomaly(φ, e=e)
     θ = true_anomaly(E, e=e)
@@ -95,7 +91,7 @@ def orbit_function(kepler_file: str):
     """Given a kepler output file returns interpolated funtions for primary and
     secondary components of a binary system"""
     names = ["fase", "vr-p", "vr-s"]
-    df = pd.read_table(kepler_file, names=names, sep="\s+", skiprows=1, index_col=False)
+    df = pd.read_table(kepler_file, names=names, sep=r'\s+', skiprows=1, index_col=False)
     primary = interp1d(df["fase"], df["vr-p"], kind="cubic")
     secondary = interp1d(df["fase"], df["vr-s"], kind="cubic")
     return primary, secondary
