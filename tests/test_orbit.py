@@ -3,10 +3,9 @@ import pytest
 import numpy.testing as npt
 
 JD_phase_EA = [
-     [57880.634, 0.0, False],
-     [[57924.334,57909.7673,57931.6172], [0.5,0.0,0.75], False],
-     [57902.4839, 4.7123, True],
-     [57902.4839, 0.75, False],
+     [57880.634, 0.0],
+     [[57924.334,57909.7673,57931.6172], [0.5,0.0,0.75]],
+     [57902.4839, 0.75],
 ]
 
 phase_EA_TA = [[
@@ -18,9 +17,9 @@ phase_vr = [[
         [0.,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9],
         [-77.17545728,-43.18936092,-1.21532574,21.6033248,37.80547845,51.05459725,62.96488981,74.4813277,86.12164237,95.2139101]]]
 
-@pytest.mark.parametrize("jd,expected_phase,mean_anomaly", JD_phase_EA)
-def test_phase(jd, expected_phase, mean_anomaly):
-    assert phase(jd, T0=57880.634,P=29.1333,  mean_anomaly=mean_anomaly) == pytest.approx(expected_phase, 0.005)
+@pytest.mark.parametrize("jd,expected_phase", JD_phase_EA)
+def test_phase(jd, expected_phase):
+    assert phase(jd, T0=57880.634,P=29.1333) == pytest.approx(expected_phase, 0.005)
 
 @pytest.mark.parametrize("phases,expected_e_anomaly,t",phase_EA_TA)
 def test_excentric_anomaly(phases,expected_e_anomaly,t):
