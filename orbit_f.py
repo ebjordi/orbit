@@ -91,7 +91,9 @@ def orbit_function(kepler_file: str):
     """Given a `kepler` output file returns interpolated functions for primary and
     secondary components of a binary system"""
     names = ["fase", "vr-p", "vr-s"]
-    df = pd.read_table(kepler_file, names=names, sep=r'\s+', skiprows=1, index_col=False)
+    df = pd.read_table(
+        kepler_file, names=names, sep=r"\s+", skiprows=1, index_col=False
+    )
     primary = interp1d(df["fase"], df["vr-p"], kind="cubic")
     secondary = interp1d(df["fase"], df["vr-s"], kind="cubic")
     return primary, secondary
