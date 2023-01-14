@@ -21,6 +21,7 @@ class Orbit:
         if JD is not None:
             self.JD = np.array(JD)
         else:
+            self.JD = None
             self._phases = np.array(phases)
         self.K1 = K1
         self.K2 = K2
@@ -90,6 +91,12 @@ class Orbit:
     def vr2(self):
         return self.rv2
 
+    @property
+    def functions(self):
+        if not hasattr(self, "_functions"):
+            self._fit_function = self.interpolate()
+        return self._functions
+
     def calc_phases(self):
         T0 = self.T0 * np.ones_like(self.JD)
         pha = (self.JD - T0) / self.P
@@ -130,18 +137,29 @@ class Orbit:
         rv = K * (np.cos(θ + ω) + self.e * np.cos(ω))
         return rv + self.gamma
 
+    def __str__(self):
+        return f"Orbital parameters for object:\n K1={self.K1},\nK2={self.K2},\nT0={self.T0},\nP={self.P},\ne={self.e},\nomega={self.omega},\ngamma={self.gamma})"
+
+    def __repr__(self):
+        return f"orbit.Orbit(JD = {self.JD}, phases={self.phases}, K1={self.K1}, K2={self.K2}, T0={self.T0}, P={self.P}, e={self.e}, omega={self.omega}, gamma={self.gamma})"
+
     @classmethod
     def from_linspace(
-        cls, points=1200, e=0.734, K1=108.3, K2=192.2, omega=126.3, gamma=34
+        cls, points=1200, e=0.734, K1=108.3, K2=-192.2, omega=126.3, gamma=34
     ):
         T0 = None
         P = None
         phases = np.linspace(0.0, 1.0, points)
         return cls(JD=None, phases=phases, K1=K1, K2=K2, e=e, omega=omega, gamma=gamma)
 
+    def interpolate(self):
+        primary = interp1d(self.phases, self.rv1, kind="cubic")
+        secondary = interp1d(self.phases, self.rv2, kind="cubic")
+        return primary, secondary
+
 
 #
-# def orbit_function(kepler_file: str):
+#  def orbit_function(kepler_file: str):
 #    """Given a `kepler` output file returns interpolated functions for primary and
 #    secondary components of a binary system"""
 #    names = ["fase", "vr-p", "vr-s"]
