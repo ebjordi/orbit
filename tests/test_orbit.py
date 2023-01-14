@@ -22,8 +22,8 @@ def test_phase(jd, expected_phase):
     assert phase(jd, T0=57880.634,P=29.1333) == pytest.approx(expected_phase, 0.005)
 
 @pytest.mark.parametrize("phases,expected_e_anomaly,t",phase_EA_TA)
-def test_excentric_anomaly(phases,expected_e_anomaly,t):
-    npt.assert_allclose(excentric_anomaly(phases,0.7346),expected_e_anomaly,rtol=1e-05,atol=1e-06)
+def test_eccentric_anomaly(phases,expected_e_anomaly,t):
+    npt.assert_allclose(eccentric_anomaly(phases,0.7346),expected_e_anomaly,rtol=1e-05,atol=1e-06)
 
 @pytest.mark.parametrize("ph,expected_EA,expected_TA",phase_EA_TA)
 def test_true_anomaly(ph,expected_EA,expected_TA):
