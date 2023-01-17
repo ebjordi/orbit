@@ -1,9 +1,19 @@
-from distutils.core import setup
-setup(name='orbit',
-      version='0.7',
-      description='Orbit object from parameters and functional implementations',
-      url='https://github.com/ebjordi/orbit.git',
-      author='Jordi Eguren Brown',
-      author_email='jordi.eguren.brown@gmail.com',
-      py_modules=['orbit','orbit_f'])
+from setuptools import find_packages
+from setuptools import setup
+from glob import glob
+from os.path import splitext
+from os.path import basename
 
+setup(
+    name="orbit",
+    version="0.7",
+    description="Orbit object and functional implementations from orbital parameters",
+    url="https://github.com/ebjordi/orbit.git",
+    author="Jordi Eguren Brown",
+    author_email="jordi.eguren.brown@gmail.com",
+    packages=find_packages("src"),
+    package_dir={"": "src"},
+    py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
+    include_package_data=True,
+    zip_safe=False,
+)
