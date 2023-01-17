@@ -15,6 +15,7 @@ class Orbit:
         e=0.734,
         omega=126.3,
         gamma=34.0,
+        a = 1.
     ):
         if JD is None and phases is None:
             raise ValueError("Both JD and phases cannot be None.")
@@ -30,6 +31,7 @@ class Orbit:
         self.e = e
         self.omega = omega
         self.gamma = gamma
+        self.a = a
 
     @property
     def phases(self):
@@ -61,6 +63,34 @@ class Orbit:
     def theta(self):
         return self.true_anomaly
 
+
+    @property
+    def radiovector1(self):
+        if not hasattr(self, "_radiovector1"):
+            self._radiovector1 = self.calc_radiovector(1)
+        return self._radiovector1
+
+    @property
+    def r1(self):
+        return self.radiovector1
+
+    @property
+    def radiovector2(self):
+        if not hasattr(self, "_radiovector2"):
+            self._radiovector2 = self.calc_radiovector(-1)
+        return self._radiovector2
+
+    @property
+    def r2(self):
+        return self.radiovector2
+
+
+    @property
+    def radiovector2(self):
+        if not hasattr(self, "_radiovector2"):
+            self._radiovector2 = self.calc_radiovector(2)
+        return self._radiovector2        
+    
     @property
     def rv1(self):
         if not hasattr(self, "_rv1"):
@@ -94,7 +124,7 @@ class Orbit:
     @property
     def functions(self):
         if not hasattr(self, "_functions"):
-            self._fit_function = self.interpolate()
+            self._functions = self.interpolate()
         return self._functions
 
     def calc_phases(self):
@@ -130,6 +160,10 @@ class Orbit:
         theta[theta < 0] = theta[theta < 0] + 2 * np.pi
         return theta
 
+    def calc_radiovector(self,identifier):
+        i = identifier
+        return (self.a*(1 - i * self.e**2))/(1+ i * self.e * np.cos(self.theta))
+
     def calc_rv(self, K):
 
         ω = self.omega * np.pi / 180.0
@@ -145,12 +179,12 @@ class Orbit:
 
     @classmethod
     def from_linspace(
-        cls, points=1200, e=0.734, K1=108.3, K2=-192.2, omega=126.3, gamma=34
+        cls, points=1200, e=0.734, K1=108.3, K2=-192.2, omega=126.3, gamma=34, a = 1
     ):
         T0 = None
         P = None
         phases = np.linspace(0.0, 1.0, points)
-        return cls(JD=None, phases=phases, K1=K1, K2=K2, e=e, omega=omega, gamma=gamma)
+        return cls(JD=None, phases=phases, K1=K1, K2=K2, e=e, omega=omega, gamma=gamma, a = a)
 
     def interpolate(self):
         primary = interp1d(self.phases, self.rv1, kind="cubic")
