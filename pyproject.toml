@@ -7,7 +7,7 @@ name = "gemae-orbit"
 authors = [
     {name = "Jordi Eguren Brown", email = "jordi.eguren.brown@gmail.com"},
 ]
-version = "0.2.0"
+version = "0.3.0"
 description = "Orbit object and functional implementations from orbital parameters"
 readme = "README.rst"
 requires-python = ">=3.7"
