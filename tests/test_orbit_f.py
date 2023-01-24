@@ -1,4 +1,4 @@
-from orbit_f import *
+from orbit.orbit_f import *
 import pytest
 import numpy.testing as npt
 
