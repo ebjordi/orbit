@@ -1,8 +1,5 @@
 from setuptools import find_packages
 from setuptools import setup
-from glob import glob
-from os.path import splitext
-from os.path import basename
 
 setup(
     name="orbit",
@@ -11,9 +8,7 @@ setup(
     url="https://github.com/ebjordi/orbit.git",
     author="Jordi Eguren Brown",
     author_email="jordi.eguren.brown@gmail.com",
-    packages=find_packages("src"),
-    package_dir={"": "src"},
-    py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
+    packages=find_packages(),
     include_package_data=True,
-    zip_safe=False,
+#    zip_safe=False,
 )
