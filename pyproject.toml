@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gemae-orbit"
+authors = [
+    {name = "Jordi Eguren Brown", email = "jordi.eguren.brown@gmail.com"},
+]
+version = "0.4.3"
+description = "Orbit object and functional implementations from orbital parameters"
+readme = "README.rst"
+requires-python = ">=3.7"
+keywords = ["orbit"]
+license = {text = "BSD-3-Clause"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "numpy",
+    "pytest",
+    "pandas",
+    ]
+#dynamic = ["version"]
+
+[project.optional-dependencies]
+
+
+[project.scripts]
