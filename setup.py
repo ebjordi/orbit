@@ -1,19 +1,21 @@
-from setuptools import find_packages
-from setuptools import setup
-from glob import glob
-from os.path import splitext
-from os.path import basename
+from setuptools import setup, find_packages
 
 setup(
-    name="orbit",
-    version="0.7",
-    description="Orbit object and functional implementations from orbital parameters",
-    url="https://github.com/ebjordi/orbit.git",
-    author="Jordi Eguren Brown",
-    author_email="jordi.eguren.brown@gmail.com",
-    packages=find_packages("src"),
-    package_dir={"": "src"},
-    py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
-    include_package_data=True,
-    zip_safe=False,
+    name='gemae-orbit',
+    version='0.4.3',
+    author='Jordi Eguren Brown',
+    author_email='jordi.eguren.brown@gmail.com',
+    description='Orbit object and functional implementations from orbital parameters',
+    long_description=open('README.rst').read(),
+    keywords=["orbit"],
+    classifiers=[
+        "Programming Language :: Python :: 3",
+    ],
+    packages=find_packages(),
+    install_requires=[
+        "numpy",
+        "pandas",
+    ],
+    python_requires='>=3.7',
+    license='BSD-3-Clause',
 )
