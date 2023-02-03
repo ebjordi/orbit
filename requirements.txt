@@ -1,0 +1,6 @@
+- numpy
+- scipy
+- setuptools
+- pre-commit
+- pytest
+- pandas
