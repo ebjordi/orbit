@@ -14,7 +14,7 @@ class Orbit:
         e=0.734,
         omega=126.3,
         gamma=34.0,
-        a = 1.
+        a=1.0,
     ):
         if JD is None and phases is None:
             raise ValueError("Both JD and phases cannot be None.")
@@ -62,7 +62,6 @@ class Orbit:
     def theta(self):
         return self.true_anomaly
 
-
     @property
     def radiovector1(self):
         if not hasattr(self, "_radiovector1"):
@@ -83,13 +82,6 @@ class Orbit:
     def r2(self):
         return self.radiovector2
 
-
-    @property
-    def radiovector2(self):
-        if not hasattr(self, "_radiovector2"):
-            self._radiovector2 = self.calc_radiovector(2)
-        return self._radiovector2        
-    
     @property
     def rv1(self):
         if not hasattr(self, "_rv1"):
@@ -127,11 +119,14 @@ class Orbit:
         return self._functions
 
     def calc_phases(self):
-        T0 = self.T0 * np.ones_like(self.JD)
-        pha = (self.JD - T0) / self.P
-        pha = pha - pha.astype(int)
-        pha[pha < 0.0] += 1.0
-        return pha
+        if self.JD is not None:
+            T0 = self.T0 * np.ones_like(self.JD)
+            pha = (self.JD - T0) / self.P
+            pha = pha - pha.astype(int)
+            pha[pha < 0.0] += 1.0
+            return pha
+        else:
+            print("JD is no defined")
 
     def calc_eccentric_anomaly(self):
         """Calculates the eccentric anomaly of an orbit given a phase"""
@@ -159,12 +154,11 @@ class Orbit:
         theta[theta < 0] = theta[theta < 0] + 2 * np.pi
         return theta
 
-    def calc_radiovector(self,identifier):
+    def calc_radiovector(self, identifier):
         i = identifier
-        return (self.a*(1 - i * self.e**2))/(1+ i * self.e * np.cos(self.theta))
+        return (self.a * (1 - i * self.e**2)) / (1 + i * self.e * np.cos(self.theta))
 
     def calc_rv(self, K):
-
         ω = self.omega * np.pi / 180.0
         θ = self.true_anomaly
         rv = K * (np.cos(θ + ω) + self.e * np.cos(ω))
@@ -178,26 +172,32 @@ class Orbit:
 
     @classmethod
     def from_linspace(
-        cls, points=1200, e=0.734, K1=108.3, K2=-192.2, omega=126.3, gamma=34, a = 1
+        cls,
+        points=1200,
+        e=0.734,
+        K1=108.3,
+        K2=-192.2,
+        omega=126.3,
+        gamma=34,
+        a=1,
+        T0=None,
+        P=None,
     ):
-        T0 = None
-        P = None
         phases = np.linspace(0.0, 1.0, points)
-        return cls(JD=None, phases=phases, K1=K1, K2=K2, e=e, omega=omega, gamma=gamma, a = a)
+        return cls(
+            JD=None,
+            phases=phases,
+            K1=K1,
+            K2=K2,
+            e=e,
+            omega=omega,
+            gamma=gamma,
+            a=a,
+            T0=T0,
+            P=P,
+        )
 
     def interpolate(self):
         primary = interp1d(self.phases, self.rv1, kind="cubic")
         secondary = interp1d(self.phases, self.rv2, kind="cubic")
         return primary, secondary
-
-
-#
-#  def orbit_function(kepler_file: str):
-#    """Given a `kepler` output file returns interpolated functions for primary and
-#    secondary components of a binary system"""
-#    names = ["fase", "vr-p", "vr-s"]
-#    df = pd.read_table(kepler_file, names=names, sep=r'\s+', skiprows=1, index_col=False)
-#    primary = interp1d(df["fase"], df["vr-p"], kind="cubic")
-#    secondary = interp1d(df["fase"], df["vr-s"], kind="cubic")
-#    return primary, secondary
-#
